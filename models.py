@@ -54,7 +54,7 @@ class PerceptronModel(object):
 
         while todaviaNo:
             todaviaNo = False
-            for x,y in dataset.iterate_once(1):
+            for x,y in dataset.iterate_once(1): # He ido probando numeros y con el único que da todos los puntos es con el 1
                 pred = self.get_prediction(x)
                 if pred != nn.as_scalar(y):
                     self.get_weights().update(x,nn.as_scalar(y))
@@ -88,11 +88,6 @@ class RegressionModel(object):
     def run(self, x):
 
         "*** YOUR CODE HERE ***"
-        #z1 = nn.AddBias(nn.Linear(x,self.w0), self.b0)
-        #a1 = nn.ReLU(z1)
-        #z2 = nn.AddBias(nn.Linear(a1,self.w1), self.b1)
-        #a2 = nn.ReLU(z2)
-        #z3 = nn.AddBias(nn.Linear(a2, self.w3), self.b2)
         uno = nn.Linear(x,self.w0)
         r1 = nn.ReLU(nn.AddBias(uno,self.b0))
         dos = nn.Linear(r1, self.w1)
@@ -101,24 +96,20 @@ class RegressionModel(object):
 
     def get_loss(self, x, y):
         """
-        Computes the loss for a batch of examples.
+               Computes the loss for a batch of examples.
 
-        Inputs:
-            x: a node with shape (batch_size x 1)
-            y: a node with shape (batch_size x 1), containing the true y-values
-                to be used for training
-        Returns: a loss node
-                ----> ES FACIL COPIA Y PEGA ESTO Y ANNADE LA VARIABLE QUE HACE FALTA PARA CALCULAR EL ERROR 
-                return nn.SquareLoss(self.run(x),ANNADE LA VARIABLE QUE ES NECESARIA AQUI), para medir el error, necesitas comparar el resultado de tu prediccion con .... que?
-        """
+               Inputs:
+                   x: a node with shape (batch_size x 1)
+                   y: a node with shape (batch_size x 1), containing the true y-values
+                       to be used for training
+               Returns: a loss node
+                       ----> ES FACIL COPIA Y PEGA ESTO Y ANNADE LA VARIABLE QUE HACE FALTA PARA CALCULAR EL ERROR
+                       return nn.SquareLoss(self.run(x),ANNADE LA VARIABLE QUE ES NECESARIA AQUI), para medir el error, necesitas comparar el resultado de tu prediccion con .... que?
+               """
         "*** YOUR CODE HERE ***"
         return nn.SquareLoss(self.run(x),y)
 
     def train(self, dataset):
-        """
-        Trains the model.
-        
-        """
         
         batch_size = self.batch_size
         total_loss = 100000
