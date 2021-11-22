@@ -28,7 +28,7 @@ class PerceptronModel(object):
         Deberiais obtener el producto escalar (o producto punto) que es "equivalente" a la distancia del coseno
         """
         "*** YOUR CODE HERE ***"
-        nn.DotProduct(self,x)
+        return nn.DotProduct(x,self.get_weights())
 
     def get_prediction(self, x):
         """
@@ -39,7 +39,7 @@ class PerceptronModel(object):
         """
         "*** YOUR CODE HERE ***"
         sol = 1
-        if nn.as_scalar(self.run(x)) >= 0:
+        if nn.as_scalar(self.run(x)) < 0:
             sol = -1
 
         return sol
@@ -53,11 +53,12 @@ class PerceptronModel(object):
         todaviaNo = True
 
         while todaviaNo:
+            todaviaNo = False
             for x,y in dataset.iterate_once(1):
                 pred = self.get_prediction(x)
-                todaviaNo = pred != nn.as_scalar(x)
-                if todaviaNo:
+                if pred != nn.as_scalar(y):
                     self.get_weights().update(x,nn.as_scalar(y))
+                    todaviaNo = True
 
 class RegressionModel(object):
     """
@@ -85,20 +86,17 @@ class RegressionModel(object):
         "*** YOUR CODE HERE ***"
 
     def run(self, x):
-        """
-        Runs the model for a batch of examples.
 
-        Inputs:
-            x: a node with shape (batch_size x 1). En este caso cada ejemplo solo está compuesto por un rasgo
-        Returns:
-            A node with shape (batch_size x 1) containing predicted y-values.
-            Como es un modelo de regresion, cada valor y tambien tendra un unico valor
-        """
         "*** YOUR CODE HERE ***"
+        #z1 = nn.AddBias(nn.Linear(x,self.w0), self.b0)
+        #a1 = nn.ReLU(z1)
+        #z2 = nn.AddBias(nn.Linear(a1,self.w1), self.b1)
+        #a2 = nn.ReLU(z2)
+        #z3 = nn.AddBias(nn.Linear(a2, self.w3), self.b2)
         uno = nn.Linear(x,self.w0)
         r1 = nn.ReLU(nn.AddBias(uno,self.b0))
         dos = nn.Linear(r1, self.w1)
-        r2 = nn.Linear(dos,self.b1)
+        r2 = nn.AddBias(dos,self.b1)
         return r2
 
     def get_loss(self, x, y):
@@ -200,7 +198,7 @@ class DigitClassificationModel(object):
         Returns: a loss node
         """
         "*** YOUR CODE HERE ***"#NO ES NECESARIO QUE LO IMPLEMENTEIS, SE OS DA HECHO
-         return nn.SoftmaxLoss(self.run(x), y)# COMO VEIS LLAMA AL RUN PARA OBTENER POR CADA BATCH
+        return nn.SoftmaxLoss(self.run(x), y)# COMO VEIS LLAMA AL RUN PARA OBTENER POR CADA BATCH
                                               # LOS 10 VALORES DEL "COSENO". TENIENDO EL Y REAL POR CADA EJEMPLO
                                               # APLICA SOFTMAX PARA CALCULAR EL COSENO MAX
                                               # (COMO UNA PROBABILIDAD), Y ESA SERA SU PREDICCION,
