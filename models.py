@@ -154,6 +154,15 @@ class DigitClassificationModel(object):
 
         output_size = 10 # TAMANO EQUIVALENTE AL NUMERO DE CLASES DADO QUE QUIERES OBTENER 10 "COSENOS"
         "*** YOUR CODE HERE ***"
+        self.batch_size = 10
+        self.w0 = nn.Parameter(1, 5)
+        self.b0 = nn.Parameter(1, 5)
+        self.w1 = nn.Parameter(5, 1)
+        self.b1 = nn.Parameter(1, 1)
+        self.w2 = nn.Parameter(10, 1)
+        self.b2 = nn.Parameter(1, 10)
+        self.listaPesos = [self.w0,self.b0,self.w1,self.b1,self.w2,self.b2]
+
 
     def run(self, x):
         """
@@ -171,7 +180,12 @@ class DigitClassificationModel(object):
             output_size = 10 # TAMANO EQUIVALENTE AL NUMERO DE CLASES DADO QUE QUIERES OBTENER 10 "COSENOS"
         """
         "*** YOUR CODE HERE ***"
-
+        uno = nn.AddBias(nn.Linear(x,self.w0),self.b0)
+        r1 = nn.ReLU(uno)
+        dos = nn.AddBias(nn.Linear(r1,self.w1),self.b1)
+        r2 = nn.ReLU(dos)
+        tres = nn.AddBias(nn.Linear(r2,self.w2),self.b2)
+        return tres
     def get_loss(self, x, y):
         """
         Computes the loss for a batch of examples.
@@ -209,6 +223,15 @@ class DigitClassificationModel(object):
             #ACTUALIZAR LOS PESOS EN BASE AL ERROR loss = self.get_loss(x, y) QUE RECORDAD QUE GENERA
             #UNA FUNCION DE LA LA CUAL SE  PUEDE CALCULAR LA DERIVADA (GRADIENTE)
             "*** YOUR CODE HERE ***"
+
+            for x,y in dataset.iterate_once(60):
+                grW0, grB0, grW1, grB1, grW2, grB2 = nn.gradients(self.get_loss(x,y),self.listaPesos)
+                self.w0.update(grW0, -0.5)
+                self.b0.update(grB0, -0.5)
+                self.w1.update(grW1, -0.5)
+                self.b1.update(grB1, -0.5)
+                self.w2.update(grW2, -0.5)
+                self.b2.update(grB2, -0.5)
 
 class LanguageIDModel(object):
     """
