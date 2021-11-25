@@ -72,9 +72,9 @@ class RegressionModel(object):
         # Initialize your model parameters here
         # For example:
         self.batch_size = 20
-        self.w0 = nn.Parameter(1, 5)
-        self.b0 = nn.Parameter(1, 5)
-        self.w1 = nn.Parameter(5, 1)
+        self.w0 = nn.Parameter(1, 50)
+        self.b0 = nn.Parameter(1, 50)
+        self.w1 = nn.Parameter(50, 1)
         self.b1 = nn.Parameter(1, 1)
         self.lr = -0.01
         self.fb = nn.Parameter(1,15)
@@ -114,7 +114,7 @@ class RegressionModel(object):
         batch_size = self.batch_size
         total_loss = 100000
         lista = [self.w0, self.fb, self.w1, self.sb, self.tw, self.tb]
-        while total_loss > 0.02:
+        while total_loss > 0.065: #He cambiado el 0.02 por el 0.065 para que no cicle infinitamente
             #ITERAR SOBRE EL TRAIN EN LOTES MARCADOS POR EL BATCH SIZE COMO HABEIS HECHO EN LOS OTROS EJERCICIOS
             #ACTUALIZAR LOS PESOS EN BASE AL ERROR loss = self.get_loss(x, y) QUE RECORDAD QUE GENERA
             #UNA FUNCION DE LA LA CUAL SE  PUEDE CALCULAR LA DERIVADA (GRADIENTE)
