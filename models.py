@@ -123,11 +123,10 @@ class RegressionModel(object):
             for x,y in dataset.iterate_once(batch_size):
                 loss = self.get_loss(x,y)
                 total_loss = nn.as_scalar(loss)
-
                 gradiente = nn.gradients(loss,lista)
                 i = 0
-                for x in lista:
-                    x.update(gradiente[i],self.learing_rate)
+                for j in lista:
+                    j.update(gradiente[i], self.learning_rate)
                     i += 1
 
 
