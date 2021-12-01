@@ -129,7 +129,6 @@ class RegressionModel(object):
                     j.update(gradiente[i], self.learning_rate)
                     i += 1
 
-
             total_loss = nn.as_scalar(self.get_loss(nn.Constant(dataset.x), nn.Constant(dataset.y)))#AQUI SE CALCULA OTRA VEZ EL ERROR PERO SOBRE TODO EL TRAIN A LA VEZ (CUIDADO!! NO ES LO MISMO el x de antes QUE dataset.x)
             
 class DigitClassificationModel(object):
@@ -147,80 +146,33 @@ class DigitClassificationModel(object):
     working on this part of the project.)
     """
     def __init__(self):
-        # Initialize your model parameters here
-        # TEN ENCUENTA QUE TIENES 10 CLASES, ASI QUE LA ULTIMA CAPA TENDRA UNA SALIDA DE 10 VALORES,
-        # UN VALOR POR CADA CLASE
-
-        output_size = 10 # TAMANO EQUIVALENTE AL NUMERO DE CLASES DADO QUE QUIERES OBTENER 10 "COSENOS"
         "*** YOUR CODE HERE ***"
         self.batch_size = 10
-        self.w0 = nn.Parameter(1, 5)
-        self.b0 = nn.Parameter(1, 5)
-        self.w1 = nn.Parameter(5, 1)
-        self.b1 = nn.Parameter(1, 1)
-        self.w2 = nn.Parameter(10, 1)
+        self.w0 = nn.Parameter(784, 250)
+        self.b0 = nn.Parameter(1, 250)
+        self.w1 = nn.Parameter(250, 150)
+        self.b1 = nn.Parameter(1, 150)
+        self.w2 = nn.Parameter(150, 10)
         self.b2 = nn.Parameter(1, 10)
         self.listaPesos = [self.w0,self.b0,self.w1,self.b1,self.w2,self.b2]
 
 
     def run(self, x):
-        """
-        Runs the model for a batch of examples.
+        uno = nn.Linear(x, self.w0)
+        r1 = nn.ReLU(nn.AddBias(uno, self.b0))
+        dos = nn.Linear(r1, self.w1)
+        r2 = nn.ReLU(nn.AddBias(dos,self.b1))
+        tres = nn.Linear(r2, self.w2)
+        return nn.AddBias(tres, self.b2)
 
-        Your model should predict a node with shape (batch_size x 10),
-        containing scores. Higher scores correspond to greater probability of
-        the image belonging to a particular class.
-
-        Inputs:
-            x: a node with shape (batch_size x 784)
-        Output:
-            A node with shape (batch_size x 10) containing predicted scores
-                (also called logits)
-            output_size = 10 # TAMANO EQUIVALENTE AL NUMERO DE CLASES DADO QUE QUIERES OBTENER 10 "COSENOS"
-        """
-        "*** YOUR CODE HERE ***"
-        uno = nn.AddBias(nn.Linear(x,self.w0),self.b0)
-        r1 = nn.ReLU(uno)
-        dos = nn.AddBias(nn.Linear(r1,self.w1),self.b1)
-        r2 = nn.ReLU(dos)
-        tres = nn.AddBias(nn.Linear(r2,self.w2),self.b2)
-        return tres
     def get_loss(self, x, y):
-        """
-        Computes the loss for a batch of examples.
 
-        The correct labels `y` are represented as a node with shape
-        (batch_size x 10). Each row is a one-hot vector encoding the correct
-        digit class (0-9).
-        POR EJEMPLO: [0,0,0,0,0,1,0,0,0,0,0] seria la y correspondiente al 5
-                     [0,1,0,0,0,0,0,0,0,0,0] seria la y correspondiente al 1
-
-        EN ESTE CASO ESTAMOS HABLANDO DE MULTICLASS, ASI QUE TIENES QUE CALCULAR 
-        Inputs:
-            x: a node with shape (batch_size x 784)
-            y: a node with shape (batch_size x 10)
-        Returns: a loss node
-        """
-        "*** YOUR CODE HERE ***"#NO ES NECESARIO QUE LO IMPLEMENTEIS, SE OS DA HECHO
-        return nn.SoftmaxLoss(self.run(x), y)# COMO VEIS LLAMA AL RUN PARA OBTENER POR CADA BATCH
-                                              # LOS 10 VALORES DEL "COSENO". TENIENDO EL Y REAL POR CADA EJEMPLO
-                                              # APLICA SOFTMAX PARA CALCULAR EL COSENO MAX
-                                              # (COMO UNA PROBABILIDAD), Y ESA SERA SU PREDICCION,
-                                              # LA CLASE QUE MUESTRE EL MAYOR COSENO, Y LUEGO LA COMPARARA CON Y 
-
+        "*** YOUR CODE HERE ***"
+        return nn.SoftmaxLoss(self.run(x), y)
     def train(self, dataset):
-        """
-        Trains the model.
-        EN ESTE CASO EN VEZ DE PARAR CUANDO EL ERROR SEA MENOR QUE UN VALOR O NO HAYA ERROR (CONVERGENCIA),
-        SE PUEDE HACER ALGO SIMILAR QUE ES EN NUMERO DE ACIERTOS. EL VALIDATION ACCURACY
-        NO LO TENEIS QUE IMPLEMENTAR, PERO SABED QUE EMPLEA EL RESULTADO DEL SOFTMAX PARA CALCULAR
-        EL NUM DE EJEMPLOS DEL TRAIN QUE SE HAN CLASIFICADO CORRECTAMENTE 
-        """
+
         batch_size = self.batch_size
         while dataset.get_validation_accuracy() < 0.97:
-            #ITERAR SOBRE EL TRAIN EN LOTES MARCADOS POR EL BATCH SIZE COMO HABEIS HECHO EN LOS OTROS EJERCICIOS
-            #ACTUALIZAR LOS PESOS EN BASE AL ERROR loss = self.get_loss(x, y) QUE RECORDAD QUE GENERA
-            #UNA FUNCION DE LA LA CUAL SE  PUEDE CALCULAR LA DERIVADA (GRADIENTE)
             "*** YOUR CODE HERE ***"
 
             for x,y in dataset.iterate_once(60):
